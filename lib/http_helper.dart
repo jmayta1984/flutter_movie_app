@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+
+import 'movie.dart';
 
 class HttpHelper {
   final String urlKey = 'api_key=3cae426b920b29ed2fb1c0749f258325';
@@ -9,15 +12,16 @@ class HttpHelper {
   final String urlPopular = '/popular?';
   final String urlTopRated = '/top_rated?';
 
-  Future<String?> getUpcoming() async {
+  Future<List?> getUpcoming() async {
     final String upcoming = urlBase + urlUpcoming + urlKey;
     http.Response result = await http.get(Uri.parse(upcoming));
 
     if (result.statusCode == HttpStatus.ok) {
-      String responseBody = result.body;
-      return responseBody;
-    }
-    else {
+      final jsonResponse = json.decode(result.body);
+      final moviesMap = jsonResponse['results'];
+      List movies = moviesMap.map((i) => Movie.fromJson(i)).toList();
+      return movies;
+    } else {
       return null;
     }
   }
