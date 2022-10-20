@@ -38,6 +38,12 @@ class _MovieListState extends State<MovieList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Movies'),
+        actions: [
+          IconButton(
+            onPressed: (){},
+            icon: const Icon(Icons.list),
+          )
+        ],
       ),
       body: ListView.builder(
         itemCount: (moviesCount == null) ? 0 : moviesCount,
