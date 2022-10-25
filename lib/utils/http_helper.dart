@@ -12,9 +12,26 @@ class HttpHelper {
   final String urlPopular = '/popular?';
   final String urlTopRated = '/top_rated?';
 
+  final String urlSearchBase = 'https://api.themoviedb.org/3/search/movie?';
+  final String urlQuery = '&query=';
+
+  Future<List?> findMovies(String title) async{
+    final String url = urlSearchBase + urlKey + urlQuery + title;
+    http.Response result = await http.get(Uri.parse(url));
+
+    if (result.statusCode == HttpStatus.ok) {
+      final jsonResponse = json.decode(result.body);
+      final moviesMap = jsonResponse['results'];
+      List movies = moviesMap.map((i) => Movie.fromJson(i)).toList();
+      return movies;
+    } else {
+      return null;
+    }
+  }
+
   Future<List?> getUpcoming() async {
-    final String upcoming = urlBase + urlUpcoming + urlKey;
-    http.Response result = await http.get(Uri.parse(upcoming));
+    final String url = urlBase + urlUpcoming + urlKey;
+    http.Response result = await http.get(Uri.parse(url));
 
     if (result.statusCode == HttpStatus.ok) {
       final jsonResponse = json.decode(result.body);

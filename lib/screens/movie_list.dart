@@ -17,6 +17,9 @@ class _MovieListState extends State<MovieList> {
   List? movies;
   HttpHelper? helper;
 
+  Icon visibleIcon = const Icon(Icons.search);
+  Widget searchBar = const Text('Movies');
+
   @override
   void initState() {
     helper = HttpHelper();
@@ -33,16 +36,40 @@ class _MovieListState extends State<MovieList> {
     });
   }
 
+  Future search(String title) async {
+    movies = await helper?.findMovies(title);
+    setState(() {
+      moviesCount = movies?.length;
+      movies = movies;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     NetworkImage image;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Movies'),
+        title: searchBar,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.list),
+            onPressed: () {
+              setState(() {
+                if (visibleIcon.icon == Icons.search) {
+                  visibleIcon = const Icon(Icons.cancel);
+                  searchBar = TextField(
+                    textInputAction: TextInputAction.search,
+                    style: const TextStyle(color: Colors.white, fontSize: 20.0),
+                    onSubmitted: (value) => search(value),
+                  );
+                } else {
+                  setState(() {
+                    visibleIcon = const Icon(Icons.search);
+                    searchBar = const Text('Movies');
+                  });
+                }
+              });
+            },
+            icon: visibleIcon,
           )
         ],
       ),
