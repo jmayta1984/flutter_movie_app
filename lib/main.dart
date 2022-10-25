@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'movie_list.dart';
+import 'screens/movie_list.dart';
 
 void main() {
   runApp(const MyMovies());

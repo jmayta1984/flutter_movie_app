@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import 'movie.dart';
+import '../models/movie.dart';
 
 class HttpHelper {
   final String urlKey = 'api_key=3cae426b920b29ed2fb1c0749f258325';
