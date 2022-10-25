@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_app/screens/movie_detail.dart';
 import '../utils/http_helper.dart';
 
 class MovieList extends StatefulWidget {
@@ -40,7 +41,7 @@ class _MovieListState extends State<MovieList> {
         title: const Text('Movies'),
         actions: [
           IconButton(
-            onPressed: (){},
+            onPressed: () {},
             icon: const Icon(Icons.list),
           )
         ],
@@ -58,6 +59,15 @@ class _MovieListState extends State<MovieList> {
             color: Colors.white,
             elevation: 2.0,
             child: ListTile(
+              onTap: () {
+                MaterialPageRoute route = MaterialPageRoute(
+                    builder: (_) => MovieDetail(movies![index]));
+                Navigator.push(context, route);
+              },
+              trailing: IconButton(
+                icon: const Icon(Icons.favorite),
+                onPressed: () {},
+              ),
               leading: CircleAvatar(
                 backgroundImage: image,
               ),
