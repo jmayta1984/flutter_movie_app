@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app/screens/movie_detail.dart';
+import '../models/movie.dart';
 import '../utils/http_helper.dart';
 
 class MovieList extends StatefulWidget {
@@ -10,9 +11,6 @@ class MovieList extends StatefulWidget {
 }
 
 class _MovieListState extends State<MovieList> {
-  final String iconBase = "https://image.tmdb.org/t/p/w92";
-  final String defaultImage =
-      "https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg";
   int? moviesCount;
   List? movies;
   HttpHelper? helper;
@@ -46,7 +44,6 @@ class _MovieListState extends State<MovieList> {
 
   @override
   Widget build(BuildContext context) {
-    NetworkImage image;
     return Scaffold(
       appBar: AppBar(
         title: searchBar,
@@ -76,37 +73,69 @@ class _MovieListState extends State<MovieList> {
       body: ListView.builder(
         itemCount: (moviesCount == null) ? 0 : moviesCount,
         itemBuilder: ((context, index) {
-          if (movies?[index].posterPath != null) {
-            image = NetworkImage(iconBase + movies?[index].posterPath);
-          } else {
-            image = NetworkImage(defaultImage);
-          }
-
-          return Card(
-            color: Colors.white,
-            elevation: 2.0,
-            child: ListTile(
-              onTap: () {
-                MaterialPageRoute route = MaterialPageRoute(
-                    builder: (_) => MovieDetail(movies![index]));
-                Navigator.push(context, route);
-              },
-              trailing: IconButton(
-                icon: const Icon(Icons.favorite),
-                onPressed: () {},
-              ),
-              leading: CircleAvatar(
-                backgroundImage: image,
-              ),
-              title: Text(movies?[index].title),
-              subtitle: Text(
-                movies?[index].overview,
-                maxLines: 2,
-              ),
-            ),
-          );
+          return MovieItem(movies![index]);
         }),
       ),
     );
+  }
+}
+
+class MovieItem extends StatefulWidget {
+  final Movie movie;
+  const MovieItem(this.movie, {super.key});
+
+  @override
+  State<MovieItem> createState() => _MovieItemState();
+}
+
+class _MovieItemState extends State<MovieItem> {
+  late bool favorite;
+  late NetworkImage image;
+
+  final String iconBase = "https://image.tmdb.org/t/p/w92";
+  final String defaultImage =
+      "https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg";
+  @override
+  void initState() {
+    favorite = false;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.movie.posterPath != null) {
+      image = NetworkImage(iconBase + widget.movie.posterPath!);
+    } else {
+      image = NetworkImage(defaultImage);
+    }
+    return Card(
+      color: Colors.white,
+      elevation: 2.0,
+      child: ListTile(
+        onTap: () {
+          MaterialPageRoute route =
+              MaterialPageRoute(builder: (_) => MovieDetail(widget.movie));
+          Navigator.push(context, route);
+        },
+        trailing: IconButton(
+          icon: Icon(Icons.favorite,
+              color: favorite ? Colors.deepOrange : Colors.grey),
+          onPressed: () {
+            setState(() {
+              favorite = !favorite;
+            });
+          },
+        ),
+        leading: CircleAvatar(
+          backgroundImage: image,
+        ),
+        title: Text(widget.movie.title!),
+        subtitle: Text(
+          widget.movie.overview!,
+          maxLines: 2,
+        ),
+      ),
+    );
+    ;
   }
 }
