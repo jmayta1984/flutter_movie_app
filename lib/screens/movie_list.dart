@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app/screens/movie_detail.dart';
 import '../models/movie.dart';
+import '../utils/db_helper.dart';
 import '../utils/http_helper.dart';
 
 class MovieList extends StatefulWidget {
@@ -91,14 +92,27 @@ class MovieItem extends StatefulWidget {
 class _MovieItemState extends State<MovieItem> {
   late bool favorite;
   late NetworkImage image;
+  late DbHelper dbHelper;
 
   final String iconBase = "https://image.tmdb.org/t/p/w92";
   final String defaultImage =
       "https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg";
+  
   @override
   void initState() {
     favorite = false;
+    dbHelper = DbHelper();
+    isFavorite();
     super.initState();
+  }
+
+
+  Future isFavorite() async {
+    await dbHelper.openDb();
+    final result = await dbHelper.isFavorite(widget.movie);
+    setState(() {
+      favorite = result;
+    });
   }
 
   @override
@@ -121,6 +135,7 @@ class _MovieItemState extends State<MovieItem> {
           icon: Icon(Icons.favorite,
               color: favorite ? Colors.deepOrange : Colors.grey),
           onPressed: () {
+            favorite?dbHelper.delete(widget.movie): dbHelper.insert(widget.movie);
             setState(() {
               favorite = !favorite;
             });
