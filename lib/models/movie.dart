@@ -17,4 +17,12 @@ class Movie {
     overview = json['overview'];
     posterPath = json['poster_path'];
   }
+
+  Map<String, dynamic> toMap(){
+    return {
+      'id': id!,
+      'title': title!,
+      'poster': posterPath!
+    };
+  }
 }
