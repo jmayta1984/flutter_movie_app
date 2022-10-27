@@ -151,6 +151,5 @@ class _MovieItemState extends State<MovieItem> {
         ),
       ),
     );
-    ;
   }
 }
